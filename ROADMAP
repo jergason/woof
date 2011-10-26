@@ -1,0 +1,4 @@
+1. Handle missing values correctly
+2. Support for discritizing into multiple bins
+3. Better examples in the documentation
+4. Some kind of testing.
