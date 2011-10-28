@@ -39,6 +39,7 @@ module Woof
           attribute[:nominal_attributes] = nil
         end
       end
+      self
     end
 
     def get_training_and_validation_sets(*proportions)
@@ -53,13 +54,17 @@ module Woof
       end
 
       return sets.map do |data|
-        ArffFile.new(@relation_name, @attribute, data, @class_attribute)
+        ArffFile.new(@relation_name, @attributes, data, @class_attribute)
       end
     end
 
     def get_class_values
       class_atts = @attributes.find { |att| att[:name] == @class_attribute }
-      class_atts[:nominal_attributes]
+      if class_atts[:nominal_attributes]
+        class_atts[:nominal_attributes]
+      else
+        class_atts[:old_nominal_attributes]
+      end
     end
 
     # Return an array of new ArffFile objects

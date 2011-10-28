@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Woof::Parser do
   let(:data_directory) { File.expand_path(File.join(File.dirname(__FILE__), 'data')) }
   let(:parser) { Woof::Parser.new(File.join(data_directory, 'iris.arff')) }
+  let(:vowel_parser) { Woof::Parser.new(File.join(data_directory, 'vowel.arff')) }
   let(:parsed_file) { parser.parse }
   it "should return a valid object when given a file path" do
     parser.should_not be_nil
@@ -11,6 +12,12 @@ describe Woof::Parser do
   it "should parse into an ArffFile object" do
     file = parser.parse
     file.should_not be_nil
+  end
+
+  describe "when parsing arff files with spaces and quotes in the attributes" do
+    it "parses correctly" do
+      vowel_parser.parse.attributes[0][:name].should == "'Train or Test'"
+    end
   end
 
   it "should keep continuous values continuous by default" do
@@ -30,8 +37,15 @@ describe Woof::Parser do
     parsed_file.data[0][parsed_file.attributes[-1][:name]].should be_instance_of(Fixnum)
   end
 
-  it "should allow you to get the values for the class" do
-    parsed_file.get_class_values.should == %w(Iris-setosa Iris-versicolor Iris-virginica)
+  describe "getting class attributes" do
+    let(:class_values) { %w(Iris-setosa Iris-versicolor Iris-virginica) }
+    it "should allow you to get the values for the class" do
+      parsed_file.get_class_values.sort.should == class_values.sort
+    end
+
+    it "handles data that has been made continuous" do
+      parsed_file.continuize!.get_class_values.sort.should == class_values.sort
+    end
   end
 
   describe "#get_training_and_validation_sets" do
@@ -48,6 +62,11 @@ describe Woof::Parser do
       new_data = split_set[0].data + split_set[1].data
       #they contain the same data but in a different order
       old_data.should_not == new_data
+    end
+
+    it "maintains the same attributes" do
+      parsed_file.attributes.should == split_set[0].attributes
+      parsed_file.attributes.should == split_set[1].attributes
     end
 
     it "returns an array of arff files with the same number of elements as the original arff_file" do

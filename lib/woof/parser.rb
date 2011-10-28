@@ -16,7 +16,6 @@ module Woof
         lines = f.readlines
       end
 
-
       #remove comments and blank lines
       lines = lines.map do |l|
         l.chomp
@@ -41,10 +40,14 @@ module Woof
         l =~ /\s*@attribute\s+/i
       end
 
+      # binding.pry
       #parse attributes
       parsed_attributes = []
       attrs.each do |attribute|
-        matches = /^\s*@attribute\s+([\w\-]+)\s+(.*)/i.match(attribute)
+        matches =/^\s*@attribute\s+('?[\w\- ]+'?)'?\s+(.*)/i.match(attribute)
+        # if matches.nil?
+        #   binding.pry
+        # end
         name = matches[1]
         type = matches[2]
 
