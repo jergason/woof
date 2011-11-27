@@ -125,6 +125,18 @@ module Woof
       @data.count
     end
 
+    alias :length :count
+
+    def [](arg)
+      dat = @data[arg]
+      return ArffFile.new(@relation_name, @attributes, dat, @class_attribute)
+    end
+
+    def -(other)
+      dat = @data - other.data
+      return ArffFile.new(@relation_name, @attributes, dat, @class_attribute)
+    end
+
     def arrange_labels_by_count
       labels = Hash.new(0)
       @data.each do |data|

@@ -9,7 +9,10 @@ module Woof
     # Ruby data structures, and return an ArffFile object
     def parse(opts={})
       opts[:discretize] ||= false
+      opts[:replace_missing_values] ||= false
+
       discretize = opts[:discretize]
+      replace_missing_values = opts[:replace_missing_values]
 
       lines = []
       File.open(@file_path) do |f|
@@ -40,7 +43,6 @@ module Woof
         l =~ /\s*@attribute\s+/i
       end
 
-      # binding.pry
       #parse attributes
       parsed_attributes = []
       attrs.each do |attribute|
@@ -79,7 +81,7 @@ module Woof
               vals[attribute[:name]] = d.to_f
             elsif attribute[:type] == "string"
               vals[attribute[:name]] = d
-              #it is a nominal attribute according to our naive parser
+            #it is a nominal attribute according to our naive parser
             else
               if attribute[:nominal_attributes].include? d
                 vals[attribute[:name]] = d
@@ -97,7 +99,6 @@ module Woof
 
 
       #Discretize the numeric attributes
-      # binding.pry
       if discretize
         parsed_attributes.each do |attribute|
           if %w[real numeric float integer int].include? attribute[:type]
