@@ -85,6 +85,9 @@ module Woof
             else
               if attribute[:nominal_attributes].include? d
                 vals[attribute[:name]] = d
+              # allow missing values
+              elsif d == "?"
+                vals[attribute[:name]] = d
               else
                 raise "Found a nominal attribute of an incorrect type!"
               end
