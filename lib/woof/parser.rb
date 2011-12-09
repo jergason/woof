@@ -109,12 +109,13 @@ module Woof
             just_numbers = data.map do |data_row|
               data_row[numeric_attribute]
             end
-            median = just_numbers.woof_median { |n1, n2| n1 <=> n2 }
+            mean = just_numbers.inject(0.0, :+).to_f / just_numbers.count
+            # median = just_numbers.woof_median { |n1, n2| n1 <=> n2 }
             # median = data.woof_median { |o1, o2| o1[numeric_attribute] <=> o2[numeric_attribute] }
             attribute[:type] = "string"
-            attribute[:nominal_attributes] = ["greater than #{median}", "less than or equal to #{median}"]
+            attribute[:nominal_attributes] = ["greater than #{mean}", "less than or equal to #{mean}"]
             data.each do |data_row|
-              data_row[numeric_attribute] = data_row[numeric_attribute] > median ? attribute[:nominal_attributes][0] : attribute[:nominal_attributes][1]
+              data_row[numeric_attribute] = data_row[numeric_attribute] > mean ? attribute[:nominal_attributes][0] : attribute[:nominal_attributes][1]
             end
           end
         end

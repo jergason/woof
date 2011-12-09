@@ -10,8 +10,15 @@ module Woof
       @class_attribute = class_attribute
     end
 
-    def radomize_data_order!
+
+    def randomize!
       @data.sort_by! { rand }
+      self
+    end
+
+    def radomize_data_order!
+      puts "DEPRECATED"
+      randomize!
       @data
     end
 
